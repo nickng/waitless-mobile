@@ -131,12 +131,13 @@
             <h3>NHS Waitless</h3>
             <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
                 <div class="input-append">
-                    <input class="input-medium" name="postcode" type="text" placeholder="Postcode, eg. E3"/>
+                    <input id="loc" class="input-medium" name="postcode" type="text" placeholder="Postcode, eg. E3"/>
                     <button class="btn">Find</button>
                 </div>
             </form>
             <p> Are you sure you need to use A&amp;E services? </p>
             <script type="text/javascript" src="js/bootstrap.min.js"></script>
+            <script type="text/javascript" src="js/app.js"></script>
         </div>
     </body>
 </html>
