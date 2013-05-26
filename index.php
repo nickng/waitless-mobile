@@ -36,8 +36,8 @@
             $waittime_hours = intval($clinic->delay / 60);
             $waittime_mins  = $clinic->delay % 60;
             echo "<li><a href='{$clinic->url}' title='{$clinic->odscode}'>{$clinic->name}</a>, {$clinic->postcode} ";
-            echo "<a href='{$_SERVER['PHP_SELF']}?details&amp;odscode={$encoded_odscode}'>Details</a> ";
-            echo "<a href='http://maps.google.com/maps?q={$clinic->latitude},{$clinic->longitude}'>Map</a><br/>";
+            echo "<a href='{$_SERVER['PHP_SELF']}?details&amp;postcode={$clinic->postcode}&amp;odscode={$encoded_odscode}'>Details</a> ";
+            echo "<a href='http://maps.google.com/maps?q={$clinic->location[0]},{$clinic->location[1]}'>Map</a><br/>";
 
             echo "Wait time <span title='{$clinic->delay} Mins' class='";
 
@@ -80,8 +80,12 @@
         $result = curl_exec($ch);
 
         $objs = json_decode($result);
-
-        $obj = array_shift($objs);
+        foreach ($objs as $obj) {
+            if ($obj->odscode == $_GET['odscode']) {
+                $clinic = $obj;
+            }
+        }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -91,9 +95,9 @@
     </head>
     <body>
         <div class="container">
-            <h3><?= $obj->name ?> <small>odscode: <?= strtoupper($_GET['odscode']) ?></small></h3>
+            <h3><?= $clinic->name ?> <small>odscode: <?= strtoupper($clinic->odscode) ?></small></h3>
             <ul>
-                <li>Address: <?= $obj->postcode ?> (<a href='http://maps.google.com/maps?q=<?= $obj->latitude ?>,<?= $obj->longitude ?>'>Map</a>)</li>
+                <li>Address: <?= $clinic->postcode ?> (<a href='http://maps.google.com/maps?q=<?= $clinic->location[0] ?>,<?= $clinic->location[1] ?>'>Map</a>)</li>
                 <li>Services available:
                     <ul>
                         <li>[dummy]</li>
@@ -102,8 +106,8 @@
                         <li>[dummy]</li>
                     </ul>
                 </li>
-                <li>Phone: <a href='tel:'02000000000'>02000000000</a></li>
-                <li>Wait time: <?= intval($obj->delay / 60) ?> Hours, <?= ($obj->delay % 60) ?> Mins (<?= $obj->delay ?> Mins)</li>
+                <li>Phone: <a href='tel:'020XXXXXXXX'>020XXXXXXXX</a></li>
+                <li>Wait time: <?= intval($clinic->delay / 60) ?> Hours, <?= intval($clinic->delay % 60) ?> Mins (<?= $clinic->delay ?> Mins)</li>
             </ul>
             <script type="text/javascript" src="js/bootstrap.min.js"></script>
         </div>
