@@ -16,10 +16,7 @@
         curl_setopt_array($ch, $options);
         $result = curl_exec($ch);
 
-        echo $json_string;
-        echo $result;
-
-        $obj = json_decode($result);
+        $objs = json_decode($result);
 ?>
 <!DOCTYPE html>
 <html>
@@ -33,7 +30,7 @@
             <h3>Waiting times near <?= strtoupper($_POST['postcode']) ?></h3>
             <ol>
 <?php
-        foreach ($obj as $clinic) {
+        foreach ($objs as $key => $clinic) {
             $encoded_odscode  = urlencode($clinic->odscode);
             $encoded_postcode = urlencode($clinic->postcode);
             $waittime_hours = intval($clinic->delay / 60);
@@ -54,6 +51,7 @@
             }
 
             echo "'>{$waittime_hours} Hours {$waittime_mins} Mins</span></li>";
+            if ($key >= 2) break;
         }
 ?>
             </ol>
