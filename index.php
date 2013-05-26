@@ -85,7 +85,6 @@
                 $clinic = $obj;
             }
         }
-}
 ?>
 <!DOCTYPE html>
 <html>
