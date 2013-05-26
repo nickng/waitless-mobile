@@ -6,7 +6,7 @@
      */
     if (isset($_POST['postcode'])):
         $req_postcode = urlencode($_POST['postcode']);
-        $json_string  = "http://waitlist.herokuapp.com/hospitals/by/distance.json?postcode={$req_postcode}";
+        $json_string  = "http://waitless.herokuapp.com/hospitals/by/distance.json?postcode={$req_postcode}";
         $ch = curl_init($json_string);
         $options = array(
             CURLOPT_RETURNTRANSFER => true,
@@ -15,6 +15,9 @@
         );
         curl_setopt_array($ch, $options);
         $result = curl_exec($ch);
+
+        echo $json_string;
+        echo $result;
 
         $obj = json_decode($result);
 ?>
