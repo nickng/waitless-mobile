@@ -106,7 +106,7 @@
                     </ul>
                 </li>
                 <li>Phone: <a href='tel:'020XXXXXXXX'>020XXXXXXXX</a></li>
-                <li>Wait time: <?= intval($clinic->delay / 60) ?> Hours, <?= intval($clinic->delay % 60) ?> Mins (<?= $clinic->delay ?> Mins)</li>
+                <li>Wait time: <?= intval($clinic->delay / 60) ?> Hours, <?= intval($clinic->delay % 60) ?> Mins (<?= $clinic->delay ?> Mins, last updated <?= $clinic->last_updated_at ?>)</li>
             </ul>
             <script type="text/javascript" src="js/bootstrap.min.js"></script>
         </div>
