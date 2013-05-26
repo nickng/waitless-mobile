@@ -1,7 +1,12 @@
 <?php
+    /**
+     * Display results.
+     *
+     * url: /?postcode=(string)
+     */
     if (isset($_POST['postcode'])):
         $req_postcode = urlencode($_POST['postcode']);
-        $json_string  = "http://e-mergency.herokuapp.com/hospitals/by/distance.json?from={$req_postcode}";
+        $json_string  = "http://waitlist.herokuapp.com/hospitals/by/distance.json?postcode={$req_postcode}";
         $ch = curl_init($json_string);
         $options = array(
             CURLOPT_RETURNTRANSFER => true,
@@ -10,8 +15,6 @@
         );
         curl_setopt_array($ch, $options);
         $result = curl_exec($ch);
-
-        echo $result;
 
         $obj = json_decode($result);
 ?>
@@ -24,17 +27,19 @@
     </head>
     <body>
         <div class="container">
-        <h3>NHS Waitless <small><?= $_POST['postcode'] ?></small></h3>
+            <h3>Waiting times near <?= strtoupper($_POST['postcode']) ?></h3>
             <ol>
 <?php
         foreach ($obj as $clinic) {
             $encoded_odscode  = urlencode($clinic->odscode);
             $encoded_postcode = urlencode($clinic->postcode);
+            $waittime_hours = intval($clinic->delay / 60);
+            $waittime_mins  = $clinic->delay % 60;
             echo "<li><a href='{$clinic->url}' title='{$clinic->odscode}'>{$clinic->name}</a>, {$clinic->postcode} ";
-            echo "<div class='btn-group'><a class='btn btn-link btn-mini' href='{$_SERVER['PHP_SELF']}?details#{$encoded_odscode}'>Details</a>";
-            echo "<a class='btn btn-link btn-mini' href='http://maps.google.com/maps?q={$encoded_postcode}'>Map</a></div> ";
+            echo "<a href='{$_SERVER['PHP_SELF']}?details&amp;odscode={$encoded_odscode}'>Details</a> ";
+            echo "<a href='http://maps.google.com/maps?q={$clinic->latitude},{$clinic->longitude}'>Map</a><br/>";
 
-            echo "wait time <span class='";
+            echo "Wait time <span title='{$clinic->delay} Mins' class='";
 
             // Different colour for wait times
             if ($clinic->delay <= 10) {
@@ -45,7 +50,7 @@
                 echo "slow";
             }
 
-            echo "'>{$clinic->delay} mins</span></li>";
+            echo "'>{$waittime_hours} Hours {$waittime_mins} Mins</span></li>";
         }
 ?>
             </ol>
@@ -56,6 +61,59 @@
     </body>
 </html>
 <?php
+    /**
+     * Display clinic details.
+     *
+     * url: /?details&odscode=(str)
+     */
+    elseif (isset($_GET['details']) && isset($_GET['odscode'])):
+        $encoded_odscode = urlencode($_GET['odscode']);
+        $json_string  = "http://waitlist.herokuapp.com/hospitals/by/distance.json?odscode={$encoded_odscode}";
+        $ch = curl_init($json_string);
+        $options = array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => array('Content-type: application/json'),
+            CURL_POSTFIELDS        => $json_string
+        );
+        curl_setopt_array($ch, $options);
+        $result = curl_exec($ch);
+
+        $objs = json_decode($result);
+
+        $obj = array_shift($objs);
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>NHS Waitless</title>
+        <link rel='stylesheet' href='css/bootstrap.min.css'/>
+    </head>
+    <body>
+        <div class="container">
+            <h3><?= $obj->name ?> <small>odscode: <?= strtoupper($_GET['odscode']) ?></small></h3>
+            <ul>
+                <li>Address: <?= $obj->postcode ?> (<a href='http://maps.google.com/maps?q=<?= $obj->latitude ?>,<?= $obj->longitude ?>'>Map</a>)</li>
+                <li>Services available:
+                    <ul>
+                        <li>[dummy]</li>
+                        <li>[dummy]</li>
+                        <li>[dummy]</li>
+                        <li>[dummy]</li>
+                    </ul>
+                </li>
+                <li>Phone: <a href='tel:'02000000000'>02000000000</a></li>
+                <li>Wait time: <?= intval($obj->delay / 60) ?> Hours, <?= ($obj->delay % 60) ?> Mins (<?= $obj->delay ?> Mins)</li>
+            </ul>
+            <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        </div>
+    </body>
+</html>
+<?php
+    /**
+     * Display search form.
+     *
+     * url: /
+     */
     else:
 ?>
 <!DOCTYPE html>
@@ -67,7 +125,7 @@
     <body>
         <div class="container">
             <h3>NHS Waitless</h3>
-            <form action="<?= $_SERVER['PHP_SELF'] ?>">
+            <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
                 <div class="input-append">
                     <input class="input-medium" name="postcode" type="text" placeholder="Postcode, eg. E3"/>
                     <button class="btn">Find</button>
