@@ -1,0 +1,12 @@
+.fast {
+  color: green;
+  font-weight: bold;
+}
+
+.normal {
+  color: black;
+}
+
+.slow {
+  color: red;
+}
