@@ -37,7 +37,7 @@
             $waittime_mins  = $clinic->delay % 60;
             echo "<li><a href='{$clinic->url}' title='{$clinic->odscode}'>{$clinic->name}</a>, {$clinic->postcode} ";
             echo "<a href='{$_SERVER['PHP_SELF']}?details&amp;postcode={$clinic->postcode}&amp;odscode={$encoded_odscode}'>Details</a> ";
-            echo "<a href='http://maps.google.com/maps?q={$clinic->location[0]},{$clinic->location[1]}'>Map</a><br/>";
+            echo "<a href='http://maps.google.com/maps?q={$clinic->location[1]},{$clinic->location[0]}'>Map</a><br/>";
 
             echo "Wait time <span title='{$clinic->delay} Mins' class='";
 
@@ -96,7 +96,7 @@
         <div class="container">
             <h3><?= $clinic->name ?> <small>odscode: <?= strtoupper($clinic->odscode) ?></small></h3>
             <ul>
-                <li>Address: <?= $clinic->postcode ?> (<a href='http://maps.google.com/maps?q=<?= $clinic->location[0] ?>,<?= $clinic->location[1] ?>'>Map</a>)</li>
+                <li>Address: <?= $clinic->postcode ?> (<a href='http://maps.google.com/maps?q=<?= $clinic->location[1] ?>,<?= $clinic->location[0] ?>'>Map</a>)</li>
                 <li>Services available:
                     <ul>
                         <li>[dummy]</li>
