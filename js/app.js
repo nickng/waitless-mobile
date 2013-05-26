@@ -8,7 +8,7 @@ function getLocation() {
 
 }
 function showPosition(position) {
-  loc.value = position.coords.longitude+","+position.coords.latitude;
+  loc.value = position.coords.latitude+","+position.coords.longitude;
 }
 
 getLocation();
