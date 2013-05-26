@@ -68,8 +68,8 @@
      * url: /?details&odscode=(str)
      */
     elseif (isset($_GET['details']) && isset($_GET['odscode'])):
-        $encoded_odscode = urlencode($_GET['odscode']);
-        $json_string  = "http://waitlist.herokuapp.com/hospitals/by/distance.json?odscode={$encoded_odscode}";
+        $encoded_postcode = urlencode($_GET['postcode']);
+        $json_string  = "http://waitlist.herokuapp.com/hospitals/by/distance.json?postcode={$encoded_postcode}";
         $ch = curl_init($json_string);
         $options = array(
             CURLOPT_RETURNTRANSFER => true,
